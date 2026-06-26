@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARMORY — Orchestrate Data At Absolute Scale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oceanicNoir: '#0f1c26',
+                        panelBg: '#152633',
+                        arcticPowder: '#F1F6F4',
+                        mysticMint: '#D9E8E2',
+                        forsythia: '#FFC801',
+                        deepSaffron: '#FF9932',
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="matrix.css">
+</head>
+<body class="bg-oceanicNoir text-arcticPowder font-sans antialiased selection:bg-forsythia selection:text-oceanicNoir relative min-h-screen overflow-x-hidden">
+
+    <canvas id="ambient-particle-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <div id="auth-gateway" class="fixed inset-0 bg-[#0f1c26]/85 z-50 flex items-center justify-center p-4 transition-all duration-500">
+        <div class="relative bg-[#15232e]/95 border border-white/10 w-full max-w-md p-8 rounded-2xl shadow-2xl backdrop-blur-md text-center space-y-6">
+            <div class="space-y-2">
+                <div class="w-12 h-12 bg-forsythia/10 border border-forsythia/30 rounded-xl flex items-center justify-center mx-auto text-forsythia font-bold text-lg font-mono">A</div>
+                <h2 class="text-2xl font-bold text-white tracking-tight">Identity Authentication</h2>
+                <p class="text-mysticMint/50 text-xs font-mono">ARMORY ENCRYPTED ASSET NETWORK</p>
+            </div>
+            <form id="login-form" class="space-y-4 text-left">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-mono text-mysticMint/40 uppercase tracking-wider">Access Token / Username</label>
+                    <input type="text" id="auth-user" required value="admin_mesh_operator" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 font-mono text-xs text-white focus:outline-none focus:border-forsythia transition-colors">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-mono text-mysticMint/40 uppercase tracking-wider">Cryptographic Security Passphrase</label>
+                    <input type="password" id="auth-pass" required value="••••••••••••" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 font-mono text-xs text-white focus:outline-none focus:border-forsythia transition-colors">
+                </div>
+                <button type="submit" class="w-full py-3 mt-2 bg-gradient-to-r from-forsythia to-deepSaffron text-black font-sans font-bold text-xs rounded-xl hover:scale-[1.01] active:scale-[0.99] transition-transform shadow-lg shadow-forsythia/10">
+                    Decrypt & Authorize Session
+                </button>
+            </form>
+            <div class="text-[10px] font-mono text-mysticMint/20">Protected by AES-GCM hardware layer data separation routines.</div>
+        </div>
+    </div>
+
+    <div id="main-content" class="relative z-10 opacity-0 min-h-screen flex flex-col transition-opacity duration-500">
+        
+        <header class="w-full border-b border-white/5 backdrop-blur-xl bg-oceanicNoir/60 z-40 px-8 py-4 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="font-sans text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-forsythia shadow-lg shadow-forsythia/50 animate-ping-custom"></span>
+                ARMORY
+            </div>
+            <nav class="hidden md:flex items-center gap-8 text-xs font-medium text-mysticMint/70">
+                <a href="#dashboard" class="hover:text-white transition-colors">Telemetry</a>
+                <a href="#pricing" class="hover:text-white transition-colors">Pricing Matrix</a>
+            </nav>
+            <button onclick="triggerTerminalMock('Manual System Deployment Run')" class="px-5 py-2 bg-gradient-to-r from-forsythia to-deepSaffron text-black font-sans font-bold text-xs rounded-full hover:opacity-90 transition-opacity">
+                Provision System
+            </button>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-8 py-12 flex-1 w-full space-y-12">
+            
+            <div class="space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full font-sans text-xs font-medium text-mysticMint">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="user-display-tag" class="text-white font-mono">admin_mesh_operator</span> Isolation Vector Secure
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Secure Vault Asset Telemetry</h1>
+            </div>
+
+            <section id="dashboard" class="p-8 bg-black/20 border border-white/5 rounded-3xl backdrop-blur-md space-y-8">
+                <div class="flex flex-wrap items-center justify-between gap-6">
+                    <div>
+                        <span class="font-mono text-xs font-semibold text-deepSaffron uppercase tracking-widest">Interactive Data Layer</span>
+                        <h2 class="text-2xl font-bold text-white tracking-tight">Timeline Scrubber & Asset Stream</h2>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="sim-inject-err" class="px-4 py-2 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 font-mono text-xs text-red-400 rounded-xl">Inject Jitter</button>
+                        <button id="sim-reset-mesh" class="px-4 py-2 border border-white/10 bg-white/5 hover:bg-white/10 font-mono text-xs text-white rounded-xl">Reset Core</button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-12 gap-6">
+                    
+                    <div class="md:col-span-4 bg-black/25 rounded-2xl border border-white/5 p-5 flex flex-col justify-between h-80">
+                        <div class="flex justify-between items-center font-mono text-[10px] text-mysticMint/40">
+                            <span>TOPOLOGY MAP</span>
+                            <span id="mesh-health-badge" class="text-emerald-400 font-bold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> HEALTHY
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 font-mono my-auto">
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-xl flex flex-col items-center justify-center">
+                                <div class="text-[9px] text-mysticMint/40 mb-1">NODE_01</div>
+                                <div id="sim-node1-val" class="text-lg text-white font-bold">11ms</div>
+                            </div>
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-xl flex flex-col items-center justify-center">
+                                <div class="text-[9px] text-mysticMint/40 mb-1">NODE_02</div>
+                                <div id="sim-node2-val" class="text-lg text-white font-bold">10ms</div>
+                            </div>
+                        </div>
+                        <div class="w-full h-[2px] bg-gradient-to-r from-forsythia/30 to-transparent relative overflow-hidden rounded-full">
+                            <div class="absolute inset-0 w-24 h-full bg-gradient-to-r from-transparent via-white to-transparent animation-data-stream"></div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-4 bg-black/35 rounded-2xl border border-white/5 p-5 flex flex-col justify-between h-80 relative group">
+                        <div class="flex justify-between items-center font-mono text-[10px] text-mysticMint/40">
+                            <span>Interactive Metrics Timeline</span>
+                            <span id="graph-speed-readout" class="text-forsythia font-bold">450 MB/s</span>
+                        </div>
+                        
+                        <div class="flex-1 relative mt-2 mb-2 bg-black/20 rounded-xl overflow-hidden border border-white/[0.02]">
+                            <canvas id="timelineGraph" class="w-full h-full block cursor-crosshair"></canvas>
+                            
+                            <div id="chart-scrub-tooltip" class="absolute pointer-events-none opacity-0 bg-panelBg border border-forsythia/40 px-3 py-2 rounded-xl text-[11px] font-mono shadow-2xl transition-opacity duration-150 z-20 space-y-1">
+                                <div class="text-mysticMint/40 text-[9px]" id="scrub-time">00:00:00</div>
+                                <div class="text-white font-bold" id="scrub-val">000 MB/s</div>
+                            </div>
+                        </div>
+                        <div class="text-[9px] font-mono text-mysticMint/30">Hover to scrub data timelines</div>
+                    </div>
+
+                    <div class="md:col-span-4 bg-gradient-to-br from-nocturnalExpedition/10 to-black/40 rounded-2xl border border-forsythia/20 p-5 h-80 flex flex-col justify-between">
+                        <span class="font-mono text-[10px] text-forsythia tracking-wider">ARMORY AI AUDITOR</span>
+                        <div class="flex-1 py-2 mt-2 space-y-2 font-mono text-[11px]">
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                <div id="ai-trend-title" class="text-white font-bold">Calculating Trend...</div>
+                                <div id="ai-trend-desc" class="text-mysticMint/60 text-[10px] mt-0.5">Analyzing historical telemetry data.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="border-t border-white/5 pt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">🕒 Session Event Audit Ledger</h3>
+                        <button id="clear-history-btn" class="px-3 py-1 bg-white/5 text-[10px] font-mono text-mysticMint/60 border border-white/10 rounded-lg">Wipe Logs</button>
+                    </div>
+                    <div class="border border-white/5 rounded-2xl bg-black/30 overflow-hidden">
+                        <div class="grid grid-cols-12 gap-4 bg-white/5 px-4 py-2 font-mono text-[10px] uppercase text-mysticMint/40 border-b border-white/5 font-bold">
+                            <div class="col-span-3">Timestamp</div>
+                            <div class="col-span-3">Security Action</div>
+                            <div class="col-span-6">Operation Details</div>
+                        </div>
+                        <div id="audit-history-rows" class="divide-y divide-white/[0.03] max-h-40 overflow-y-auto font-mono text-[11px]"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pricing" class="py-6 bg-black/20 rounded-3xl border border-white/5 p-8 backdrop-blur-md">
+                <div class="flex flex-wrap gap-6 justify-between items-center mb-8">
+                    <div>
+                        <h2 class="font-sans text-xl font-bold tracking-tight text-white">Operational Pricing Matrix</h2>
+                        <p class="text-xs text-mysticMint/40 font-mono mt-1">Scale up resources based on mesh compute limits.</p>
+                    </div>
+                    <div class="flex items-center gap-4 bg-black/40 p-2.5 rounded-xl border border-white/10">
+                        <select id="currency-select" class="bg-transparent text-white border-none font-sans text-xs font-semibold outline-none cursor-pointer">
+                            <option value="INR" class="bg-oceanicNoir text-white">INR (₹)</option>
+                            <option value="USD" class="bg-oceanicNoir text-white">USD ($)</option>
+                        </select>
+                        <input type="checkbox" id="billing-toggle" class="sr-only peer">
+                        <label for="billing-toggle" class="w-9 h-5 bg-white/10 rounded-full cursor-pointer relative peer-checked:bg-forsythia transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4"></label>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-6 bg-white/[0.02] rounded-2xl border border-white/5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-sans text-xs font-medium uppercase tracking-widest text-mysticMint/50">Core Pipeline</h3>
+                            <div class="font-mono text-3xl font-bold my-4 text-white"><span id="price-pipeline">₹2000</span></div>
+                            <p class="text-[11px] text-mysticMint/60 font-sans">Ideal configuration node metrics for standardized isolation row lookups.</p>
+                        </div>
+                        <button onclick="triggerTerminalMock('Core Pipeline Provision Run')" class="w-full py-2.5 bg-white/5 text-white font-sans text-xs rounded-xl border border-white/10 hover:bg-white hover:text-black transition-all">Provision Tier 1</button>
+                    </div>
+
+                    <div class="p-6 bg-gradient-to-b from-[#114C5A]/20 to-transparent rounded-2xl border border-forsythia/20 flex flex-col justify-between space-y-4 relative">
+                        <span class="absolute top-3 right-3 bg-forsythia/10 text-forsythia font-mono text-[9px] uppercase font-bold px-2 py-0.5 rounded-md border border-forsythia/20">Optimized</span>
+                        <div>
+                            <h3 class="font-sans text-xs font-medium uppercase tracking-widest text-white">Advanced Mesh</h3>
+                            <div class="font-mono text-3xl font-bold my-4 text-forsythia"><span id="price-advanced">₹5500</span></div>
+                            <p class="text-[11px] text-mysticMint/60 font-sans">Enhanced multi-cluster routing keys with real-time active Jitter protection routines.</p>
+                        </div>
+                        <button onclick="triggerTerminalMock('Advanced Mesh Provision Run')" class="w-full py-2.5 bg-forsythia text-black font-sans text-xs font-bold rounded-xl hover:opacity-90 transition-opacity">Provision Tier 2</button>
+                    </div>
+
+                    <div class="p-6 bg-white/[0.02] rounded-2xl border border-white/5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-sans text-xs font-medium uppercase tracking-widest text-mysticMint/50">Hyper Mesh</h3>
+                            <div class="font-mono text-3xl font-bold my-4 text-white"><span id="price-hyper">₹12500</span></div>
+                            <p class="text-[11px] text-mysticMint/60 font-sans">Unlimited resource provisioning blocks designed for massive decentralized ledger clusters.</p>
+                        </div>
+                        <button onclick="triggerTerminalMock('Hyper Mesh Provision Run')" class="w-full py-2.5 bg-white/5 text-white font-sans text-xs rounded-xl border border-white/10 hover:bg-white hover:text-black transition-all">Provision Tier 3</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="terminal-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-[#131f28] w-full max-w-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+            <div class="bg-black/30 px-5 py-3 border-b border-white/5 flex items-center justify-between font-mono text-xs">
+                <span class="text-forsythia font-bold">runtime_provisioner.sh</span>
+                <button id="close-terminal" class="text-mysticMint/40 hover:text-white text-lg focus:outline-none">&times;</button>
+            </div>
+            <div id="terminal-body" class="p-6 font-mono text-[12px] text-emerald-400 h-48 overflow-y-auto space-y-2 bg-black/10"></div>
+        </div>
+    </div>
+
+    <script src="orchestrator.js"></script>
+</body>
+</html>
